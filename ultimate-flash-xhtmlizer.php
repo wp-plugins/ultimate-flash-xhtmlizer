@@ -40,7 +40,7 @@ function ufx_add_option_page()
 <h2>Ultimate Flash XHTMLizer</h2>
 <form method="post" action="<? print $_SERVER['REQUEST_URI'] ?>">
 <?php settings_fields('ufx_options'); ?>
-<?php do_settings_sections('ufx'); ?>
+<?php do_settings_sections(__FILE__); ?>
 <p class="submit">
 <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?> " />
 </p>
@@ -63,19 +63,17 @@ function ufx_section_text()
 
 function ufx_print_option()
 {
-    print '<input type="checkbox" name="do_include_css_and_js" value="' . get_option('do_include_css_and_js') . '" />';
-}
-
-function ufx_validate_options($options)
-{
-    return $options;
+    $options = get_option('ufx_options');
+    if ($options['do_include_css_and_js']) print 'do_include_css_and_js';
+    $checked = $options['do_include_css_and_js'] ? 'checked="checked"' :'';
+    print '<input id="do_include_css_and_js" type="checkbox" name="ufx_options[do_include_css_and_js]' . $checked . '" />';
 }
 
 function ufx_admin_init()
 {
-    register_setting('ufx_options', 'ufx_options', 'ufx_validate_options');
-    add_settings_section('ufx_main', 'Main Settings', 'ufx_section_text', 'ufx');
-    add_settings_field('do_include_css_and_js', 'Include CSS and JavaScript', 'ufx_print_option', 'ufx', 'ufx_main');
+    register_setting('ufx_options', 'ufx_options');
+    add_settings_section('ufx_main', 'Main Settings', 'ufx_section_text', __FILE__);
+    add_settings_field('do_include_css_and_js', 'Include CSS and JavaScript', 'ufx_print_option', __FILE__, 'ufx_main');
 }
 
 
