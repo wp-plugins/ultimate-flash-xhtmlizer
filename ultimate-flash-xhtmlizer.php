@@ -38,7 +38,7 @@ function ufx_add_option_page()
 ?>
 <div class="wrap">
 <h2>Ultimate Flash XHTMLizer</h2>
-<form method="post" action="<? print $_SERVER['REQUEST_URI'] ?>">
+<form method="post" action="<?php print $_SERVER['REQUEST_URI'] ?>">
 <?php settings_fields('ufx_options'); ?>
 <?php do_settings_sections(__FILE__); ?>
 <p class="submit">
@@ -64,7 +64,7 @@ function ufx_section_text()
 function ufx_print_option()
 {
     $options = get_option('ufx_options');
-    if ($options['do_include_css_and_js']) print 'do_include_css_and_js';
+    if ($options['do_include_css_and_js']) print 'do_include_css_and_js';  // debug
     $checked = $options['do_include_css_and_js'] ? 'checked="checked"' :'';
     print '<input id="do_include_css_and_js" type="checkbox" name="ufx_options[do_include_css_and_js]' . $checked . '" />';
 }
