@@ -2,12 +2,14 @@
 /*
 Plugin Name: Ultimate Flash XHTMLizer
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
-Description: Turns all your nasty Flash objects into well-formed XHTML.  It works by escaping Flash objects on the server side and unescaping them on the client side using JavaScript.
+Description: Turns Flash embed code into well-formed XHTML by escaping object tags on the server side and unescaping them on the client side using JavaScript.
 Version: 0.1
 Author: László Monda
 Author URI: http://monda.hu
 License: GPL3
 */
+
+define('UFX_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 function ufx_replace_flash_object($matches)
 {
@@ -20,12 +22,11 @@ function ufx_replace_flash_objects($html)
     return preg_replace_callback('/(<object[ \t\n]+.*>.*<\/object>)/i', 'ufx_replace_flash_object', $html);
 }
 
-define('ufx_PLUGIN_URL', plugin_dir_url( __FILE__ ));
-
-if (false) {  // This should depend on the value of the settings checkbox.
-    wp_register_style('ultimate-flash-xhtmlizer.css', ufx_PLUGIN_URL . 'ultimate-flash-xhtmlizer.css');
+$options = get_option('ufx_options');
+if (isset($options['do_include_css_and_js'])) {
+    wp_register_style('ultimate-flash-xhtmlizer.css', UFX_PLUGIN_URL . 'ultimate-flash-xhtmlizer.css');
     wp_enqueue_style('ultimate-flash-xhtmlizer.css');
-    wp_register_script('ultimate-flash-xhtmlizer.js', ufx_PLUGIN_URL . 'ultimate-flash-xhtmlizer.js', array('jquery'));
+    wp_register_script('ultimate-flash-xhtmlizer.js', UFX_PLUGIN_URL . 'ultimate-flash-xhtmlizer.js', array('jquery'));
     wp_enqueue_script('ultimate-flash-xhtmlizer.js');
 }
 
@@ -38,7 +39,7 @@ function ufx_add_option_page()
 ?>
 <div class="wrap">
 <h2>Ultimate Flash XHTMLizer</h2>
-<form method="post" action="<?php print $_SERVER['REQUEST_URI'] ?>">
+<form method="post" action="options.php">
 <?php settings_fields('ufx_options'); ?>
 <?php do_settings_sections(__FILE__); ?>
 <p class="submit">
@@ -64,9 +65,8 @@ function ufx_section_text()
 function ufx_print_option()
 {
     $options = get_option('ufx_options');
-    if ($options['do_include_css_and_js']) print 'do_include_css_and_js';  // debug
-    $checked = $options['do_include_css_and_js'] ? 'checked="checked"' :'';
-    print '<input id="do_include_css_and_js" type="checkbox" name="ufx_options[do_include_css_and_js]' . $checked . '" />';
+    $checked = isset($options['do_include_css_and_js']) ? 'checked="checked"' :'';
+    print '<input id="do_include_css_and_js" type="checkbox" name="ufx_options[do_include_css_and_js]" ' . $checked . '" />';
 }
 
 function ufx_admin_init()
@@ -76,10 +76,17 @@ function ufx_admin_init()
     add_settings_field('do_include_css_and_js', 'Include CSS and JavaScript', 'ufx_print_option', __FILE__, 'ufx_main');
 }
 
+function ufx_add_defaults() {
+    $options = get_option('ufx_options');
+    if (!isset($options)) {
+        update_option('ufx_options', array('do_include_css_and_js' => 'on'));
+    }
+}
 
 if (is_admin()) {
     add_action('admin_menu', 'ufx_admin_menu');
     add_action('admin_init', 'ufx_admin_init');
+    register_activation_hook(__FILE__, 'ufx_add_defaults');
 }
 
 ?>
