@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Flash XHTMLizer
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Turns Flash embed code into well-formed XHTML by escaping object tags on the server side and unescaping them on the client side using JavaScript.
-Version: 0.1
+Version: 0.2
 Author: László Monda
 Author URI: http://monda.hu
 License: GPL3
@@ -19,8 +19,14 @@ function ufx_replace_flash_object($matches)
 
 function ufx_replace_flash_objects($html)
 {
-    return preg_replace_callback('/(<object[ \t\n]+.*>.*<\/object>)/i',
-                                 'ufx_replace_flash_object', $html);
+    if (is_search()) {
+        // The search page probably contains excerpts which would display
+        // the escaped object tags as they are which is not intended.
+        return $html;
+    } else {
+        return preg_replace_callback('/(<object[ \t\n]+.*>.*<\/object>)/i',
+                                     'ufx_replace_flash_object', $html);
+    }
 }
 
 $options = get_option('ufx_options');

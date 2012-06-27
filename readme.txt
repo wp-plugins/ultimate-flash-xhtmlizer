@@ -3,8 +3,8 @@ Contributors:
 Donate link:
 Tags: flash, xhtml, converter
 Requires at least: 2.7
-Tested up to: 3.1.1
-Stable tag: 0.1
+Tested up to: 3.4
+Stable tag: 0.2
 
 Turns Flash embed code into well-formed XHTML by escaping object tags on the server side and
 unescaping them on the client side using JavaScript.
@@ -29,3 +29,7 @@ the server side and unescaping them on the client side using JavaScript.
 
 = 0.1 =
 * First release.
+
+= 0.2 =
+* Don't escape object tags on search pages because the excerpts that are featured on those pages
+  by most themes would display the escaped content as it is.
